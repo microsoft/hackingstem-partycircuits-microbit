@@ -38,9 +38,9 @@ LED_TIME_OFF = 50
 
 #Set variables for intensity and speed
 LED_FLASH_SPEED = 10
-LED_BRIGHT = 255
-LED_MID_BRIGHT = 175
-LED_DIM = 100
+LED_BRIGHT = 1023
+LED_MID_BRIGHT = 1023*0.75
+LED_DIM = 1023*0.5
 LED_FAST_SPEED = 250
 LED_MED_SPEED = 500
 LED_SLOW_SPEED = 1000
@@ -99,7 +99,7 @@ def turnOnLeds(intensity, ledStatus):
  
 #  Turn all LEDs off
 def turnLedsOff():
-    for i in range(0,5):
+    for i in range(0,len(ledPinList)):
         ledPinList[i].write_analog(0)
 
 '''def LEDFlashSequence():
