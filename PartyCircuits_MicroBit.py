@@ -21,8 +21,7 @@
 #Import all of the Micro:Bit Library 
 from microbit import *
 
-testArray = [1,1,1,1] #Testing purposes
-
+testArray = [1,1,1,1] #For testing purposes only
 
 # Setup & Config
 display.off()  # Turns off LEDs to free up additional input pins
@@ -47,7 +46,7 @@ LED_SLOW_SPEED = 1000
 
 #Set variables for Excel Commands
 #  LED status: 0 = off, 1 = on
-ledStatusArray = [0]*6
+ledCommandList = [0]*6
 commandArrayRaw = [0]*10
 commandArray = [0]*10
 
@@ -93,30 +92,22 @@ def ledFlashSpeed(flashSpeedBin):
 
 #  Turn LEDs on based on Excel commands
 def turnOnLeds(intensity, ledStatus): 
-    for i in range(0,len(ledStatus)): 
-        if ledStatus[i] == 1:
+    for i in range(len(ledStatus)): 
+        if ledStatus[i] == "1":
             ledPinList[i].write_analog(intensity)
  
 #  Turn all LEDs off
-def turnLedsOff():
+def turnOffLeds():
     for i in range(0,len(ledPinList)):
         ledPinList[i].write_analog(0)
 
-'''def LEDFlashSequence():
+#Function to flash appropriate LEDs based on Excel commands
+def ledFlashSequence(intensity, flashSpeed, ledCommandArray):
+    turnOnLeds(intensity, ledCommandArray)
+    sleep(flashSpeed)
+    turnOffLeds()
+    sleep(LED_TIME_OFF)
 
-
-def process_data(s):
-    # processes the incoming data from Excel and sets it into appropriate variables
-    global intensity, flash_speed, led_1, led_2, led_3, led_4, led_5, led_6
-    loop = int(s[0])
-    intensity = int(s[1],16)
-    flash_speed = int(s[2],16)
-    led_1 = int(s[3],16)
-    led_2 = int(s[4],16)
-    led_3 = int(s[5],16)
-    led_4 = int(s[6],16)
-    led_5 = int(s[7],16)
-    led_6 = int(s[8],16)'''
 
 #=============================================================================#
 #---------------The Code Below Here is for Excel Communication----------------#
@@ -162,15 +153,12 @@ while (True):
             flashSpeed = ledFlashSpeed(s)
 
             #LED Flash Sequence
-            turnOnLeds(intensity, ledCommandList)
-            sleep(flashSpeed)
-            turnLedsOff()
-            sleep(LED_TIME_OFF)
+            ledFlashSequence(intensity, flashSpeed, ledCommandList)
    
             if (serial_in_data[0] != "#pause"):
                 #uart is the micro:bit command for serial
                 try:
                     uart.write('{},{},{},{},{},{},{}'.format(commandNumber, ledCommandList[0], ledCommandList[1], ledCommandList[2], ledCommandList[3], ledCommandList[4], ledCommandList[5])+EOL)
                 except:
-                    uart.write('Null Array'+EOL)
+                    pass
             sleep(DATA_RATE)
