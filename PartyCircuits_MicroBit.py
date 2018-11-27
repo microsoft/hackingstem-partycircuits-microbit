@@ -94,7 +94,7 @@ def ledFlashSpeed(flashSpeedBin):
 #  Turn LEDs on based on Excel commands
 def turnOnLeds(intensity, ledStatus): 
     for i in range(0,len(ledStatus)): 
-        if ledStatus[i] == "1":
+        if ledStatus[i] == 1:
             ledPinList[i].write_analog(intensity)
  
 #  Turn all LEDs off
@@ -153,7 +153,7 @@ while (True):
     isLoop = parsedData[0]
     commandArrayRaw = parsedData[1:]
     if commandArrayRaw != "":
-        for i in range(0,len(commandArrayRaw[:])):
+        for i in range(0,len(commandArrayRaw)):
             commandNumber = i + 1 #store the command row in a variable
             commandArray[i] = hexToBinary(str(commandArrayRaw[i]))
 
@@ -166,8 +166,11 @@ while (True):
             sleep(flashSpeed)
             turnLedsOff()
             sleep(LED_TIME_OFF)
-
+   
             if (serial_in_data[0] != "#pause"):
                 #uart is the micro:bit command for serial
-                uart.write('{},{}'.format(commandNumber, ledCommandList)+EOL)
+                try:
+                    uart.write('{},{},{},{},{},{},{}'.format(commandNumber, ledCommandList[0], ledCommandList[1], ledCommandList[2], ledCommandList[3], ledCommandList[4], ledCommandList[5])+EOL)
+                except:
+                    uart.write('Null Array'+EOL)
             sleep(DATA_RATE)
