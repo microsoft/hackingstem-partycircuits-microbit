@@ -50,6 +50,11 @@ ledCommandList = [0]*6
 commandArrayRaw = [0]*10
 commandArray = [0]*10
 
+got_data = False
+play_infinitely = False
+is_paused = False
+
+
 #Functions to translate the Excel Hex command sequence
 #  Convert hex number into base 10 integer then into binary
 def hexToBinary(hexNum):
@@ -128,7 +133,7 @@ def getData():
         splitByte = byteIn.split("'")
         builtString += splitByte[1]
     parseData(builtString)
-    return (parsedData)
+    return (builtString != "")
 
 def parseData(s):
     #   This function seperates the string into an array
@@ -136,29 +141,48 @@ def parseData(s):
     if s != "":
         parsedData = s.split(",")
 
+
+def update_control_state():
+    global got_data, is_paused, play_infinitely, commandArrayRaw
+    got_data = getData()    
+    if got_data:
+        uart.write("got: {}".format(parseData) + EOL)
+        is_paused = parsedData[0] == "#pause"
+        play_infinitely = parsedData[1] == "1" 
+        commandArrayRaw = parsedData[2:] 
+
+
 #=============================================================================#
 #------------------------------Main Program Loop------------------------------#
 #=============================================================================#
-while (True):
-    serial_in_data = getData() 
-    isLoop = parsedData[0]
-    commandArrayRaw = parsedData[1:]
-    if commandArrayRaw != "":
-        for i in range(0,len(commandArrayRaw)):
-            commandNumber = i + 1 #store the command row in a variable
-            commandArray[i] = hexToBinary(str(commandArrayRaw[i]))
 
-            i, s, ledCommandList = splitBinary(commandArray[i])
-            intensity = ledIntensity(i)
-            flashSpeed = ledFlashSpeed(s)
+while (True):
+    update_control_state()
+
+    if got_data or play_infinitely:
+        for command_index in range(len(commandArrayRaw)-1):
+            uart.write("Loop: {}".format(command_index) + EOL)
+
+            # Leave for loop if we're paused
+            if is_paused:
+                break
+            command = commandArrayRaw[command_index]    
+            intensity, flashSpeed, ledCommandList = splitBinary(hexToBinary(command))
+            intensity = ledIntensity(intensity)
+            flashSpeed = ledFlashSpeed(flashSpeed)
+            
+
+            #uart is the micro:bit command for serial
+            try:
+                uart.write('{}{}'.format(command_index + 1, EOL))
+            except:
+                pass
 
             #LED Flash Sequence
             ledFlashSequence(intensity, flashSpeed, ledCommandList)
-   
-            if (serial_in_data[0] != "#pause"):
-                #uart is the micro:bit command for serial
-                try:
-                    uart.write('{},{},{},{},{},{},{}'.format(commandNumber, ledCommandList[0], ledCommandList[1], ledCommandList[2], ledCommandList[3], ledCommandList[4], ledCommandList[5])+EOL)
-                except:
-                    pass
-            sleep(DATA_RATE)
+            sleep(DATA_RATE)            
+        
+            update_control_state()
+
+        
+ 
