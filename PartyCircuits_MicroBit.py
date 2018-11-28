@@ -146,7 +146,6 @@ def update_control_state():
     global got_data, is_paused, play_infinitely, commandArrayRaw
     got_data = getData()    
     if got_data:
-        uart.write("got: {}".format(parseData) + EOL)
         is_paused = parsedData[0] == "#pause"
         play_infinitely = parsedData[1] == "1" 
         commandArrayRaw = parsedData[2:] 
@@ -161,8 +160,6 @@ while (True):
 
     if got_data or play_infinitely:
         for command_index in range(len(commandArrayRaw)-1):
-            uart.write("Loop: {}".format(command_index) + EOL)
-
             # Leave for loop if we're paused
             if is_paused:
                 break
