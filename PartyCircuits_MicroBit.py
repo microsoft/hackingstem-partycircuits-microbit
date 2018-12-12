@@ -21,8 +21,6 @@
 #Import all of the Micro:Bit Library 
 from microbit import *
 
-testArray = [1,1,1,1] #For testing purposes only
-
 # Setup & Config
 display.off()  # Turns off LEDs to free up additional input pins
 uart.init(baudrate=9600)  # Sets serial baud rate
@@ -148,7 +146,7 @@ def update_control_state():
     if got_data:
         is_paused = parsedData[0] == "#pause"
         play_infinitely = parsedData[1] == "1" 
-        commandArrayRaw = parsedData[2:] 
+        commandArrayRaw = parsedData[2:10] 
 
 
 #=============================================================================#
@@ -159,7 +157,7 @@ while (True):
     update_control_state()
 
     if got_data or play_infinitely:
-        for command_index in range(len(commandArrayRaw)-1):
+        for command_index in range(len(commandArrayRaw)):
             # Leave for loop if we're paused
             if is_paused:
                 break
@@ -168,7 +166,6 @@ while (True):
             intensity = ledIntensity(intensity)
             flashSpeed = ledFlashSpeed(flashSpeed)
             
-
             #uart is the micro:bit command for serial
             try:
                 uart.write('{}{}'.format(command_index + 1, EOL))
@@ -180,6 +177,3 @@ while (True):
             sleep(DATA_RATE)            
         
             update_control_state()
-
-        
- 
