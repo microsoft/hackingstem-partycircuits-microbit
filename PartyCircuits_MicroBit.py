@@ -51,6 +51,7 @@ commandArray = [0]*10
 got_data = False
 play_infinitely = False
 is_paused = False
+last_built_string = ""
 
 
 #Functions to translate the Excel Hex command sequence
@@ -121,24 +122,29 @@ parsedData = [0] * 8
 
 def getData():
     #   This function gets data from serial and builds it into a string
-    global parsedData, builtString
-    builtString = ""
+    global parsedData, last_built_string, new_built_string
+    new_built_string = ""
     while uart.any() is True:
         byteIn = uart.read(1)
         if byteIn == b'\n':
-            continue
+            break
         byteIn = str(byteIn)
         splitByte = byteIn.split("'")
-        builtString += splitByte[1]
-    parseData(builtString)
-    return (builtString != "")
+        new_built_string += splitByte[1]
+    if last_built_string != new_built_string:
+        parseData(new_built_string)
+    last_built_string = new_built_string
+    return (new_built_string != "")
 
 def parseData(s):
     #   This function seperates the string into an array
     global parsedData
-    if s != "":
+    comma_count = 0
+    for index in range(len(new_built_string)):
+        if new_built_string[index] == ",":
+            comma_count += 1
+    if comma_count == 10 and s != "":
         parsedData = s.split(",")
-
 
 def update_control_state():
     global got_data, is_paused, play_infinitely, commandArrayRaw
@@ -146,7 +152,7 @@ def update_control_state():
     if got_data:
         is_paused = parsedData[0] == "#pause"
         play_infinitely = parsedData[1] == "1" 
-        commandArrayRaw = parsedData[2:10] 
+        commandArrayRaw = parsedData[2:10]
 
 
 #=============================================================================#
