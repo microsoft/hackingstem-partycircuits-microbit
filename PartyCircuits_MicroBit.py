@@ -1,6 +1,7 @@
 # ------------__ Hacking STEM – PartyCircuits_MicroBit.py – micro:bit __-----------
 #  For use with the Party Circuits lesson plan for electricity basics
 #  available from Microsoft Education Workshop at 
+#  https://github.com/microsoft/hackingstem-partycircuits-microbit.git
 #  http://aka.ms/hackingSTEM
 #
 #  Overview: This project uses the Micro:Bit to control lights. It 
