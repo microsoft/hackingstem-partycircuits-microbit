@@ -12,7 +12,7 @@
 #
 #  Comments, contributions, suggestions, bug reports, and feature
 #  requests are welcome! For source code and bug reports see:
-#  http://github.com/[TODO github path to Hacking STEM]
+#  https://github.com/microsoft/hackingstem-partycircuits-microbit
 #
 #  Copyright 2018, Jen Fox (AKA jenfoxbot)
 #  Microsoft EDU Workshop - HackingSTEM
