@@ -2,7 +2,7 @@
 Microcontroller code for Microsoft Hacking STEM Party Lights lesson plan adapted for micro:bit
 
 # Getting Started
-1. Download lesson assets at https://github.com/microsoft/hackingstem-partycircuits-microbit.git
+1. Download lesson assets at https://education.microsoft.com/en-us/hackingStem/lesson/ee1b03dc
 1. Build your Party Lights!
 2. Use [Mu for Python](https://codewith.mu/) to flash the .py to your  [micro:bit](https://www.microbit.org/) microcontroller
 3. Verify data interactions in Excel
